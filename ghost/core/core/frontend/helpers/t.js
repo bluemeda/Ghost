@@ -18,12 +18,16 @@ const messages = {
     oopsErrorTemplateHasError: 'Oops, seems there is an error in the template.'
 };
 
-module.exports = function t(text, options) {
+module.exports = function t(textObject, options) {
     if (text === undefined && options === undefined) {
         throw new errors.IncorrectUsageError({
             message: tpl(messages.oopsErrorTemplateHasError)
         });
     }
+
+    const text = typeof textObject === "string" ? textObject : textObject.string;
+    const lang = options.data.root.blockCache?.lang?.[0];
+    const path = lang ? `${lang}.${text}` : text;
 
     const bindings = {};
     let prop;
@@ -33,5 +37,5 @@ module.exports = function t(text, options) {
         }
     }
 
-    return themeI18n.t(text, bindings);
+    return themeI18n.t(path, bindings);
 };
